@@ -20,7 +20,7 @@ scenes = [
         "nr": "1",
         "title": "1. Empfang beim BIT-Schnuppertag",
         "desc": "Ein junger Teenie-Junge und ein Mädchen betreten motiviert das moderne BIT-Gebäude in Zollikofen.",
-        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass IT administration building in Zollikofen, smiling with excitement, warm indoor lighting"
+        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass Bundesamt für Informatik (BIT) building in Zollikofen, smiling with excitement, warm indoor lighting"
     },
     {
         "nr": "2",
@@ -32,13 +32,13 @@ scenes = [
         "nr": "3",
         "title": "3. Motivation zu Hause",
         "desc": "Der Junge tippt am Abend voller Tatendrang seine Bewerbung am eigenen Laptop.",
-        "prompt": STYLE + "A teenage boy sitting motivated at his bedroom desk at dusk, typing a job application on a modern laptop, warm desk lamp light"
+        "prompt": STYLE + "A teenage boy sitting motivated at his bedroom desk at dusk, typing a job Informatiker EFZ on a modern laptop, warm desk lamp light"
     },
     {
         "nr": "4",
         "title": "4. Vorbereitung mit den Eltern",
         "desc": "Gemeinsam mit Mutter und Vater bespricht er am Esstisch die Bewerbungsunterlagen.",
-        "prompt": STYLE + "A teenage boy sitting at a cozy wooden dining table with his supportive mother and father, looking over printed application documents together, proud family moment"
+        "prompt": STYLE + "A teenage boy sitting at a cozy wooden dining table with his supportive mother and father, looking over printed Bewerbung documents together, proud family moment"
     },
     {
         "nr": "5",
@@ -50,7 +50,7 @@ scenes = [
         "nr": "6",
         "title": "6. Glücklicher Ausstieg aus dem BIT",
         "desc": "Glücklich und erleichtert verlässt die Familie das moderne BIT-Gebäude in Zollikofen.",
-        "prompt": STYLE + "A teenage boy and his parents walking outside a modern glass administrative office building in Zollikofen, smiling and happy under a bright sunny sky"
+        "prompt": STYLE + "A teenage boy and his parents walking outside a modern glass administrative BIT office building in Zollikofen, smiling and happy under a bright sunny sky"
     },
     {
         "nr": "7",
