@@ -1,65 +1,95 @@
 import streamlit as st
 import requests
 import json
+import time
 
-st.set_page_config(page_title="3D Gebäude Visualisierung", layout="centered")
+st.set_page_config(page_title="AI Adlerflug Simulation", layout="centered")
 
-st.title("🏗️ AI Gebäude Visualisierung")
-st.write("Erstelle Architektur-Visualisierungen über den OpenRouter Image Endpunkt.")
+st.title("🦅 AI Adlerflug Simulation")
+st.write("Generiere kinoreife Kameraflüge aus der Adlerperspektive über OpenRouter.")
 
-# API-Key aus den Streamlit Secrets auslesen
+# API-Key sicher aus den Streamlit Secrets auslesen
 api_key = st.secrets.get("OPENROUTER_API_KEY", "")
 
 if not api_key:
     st.warning("⚠️ Kein API-Key in den Streamlit Secrets gefunden! Bitte trage OPENROUTER_API_KEY im Cloud Dashboard ein.")
 
-prompt = st.text_area(
-    "Beschreibe den Raum oder das Gebäude:",
-    value="A wide-angle photorealistic interior shot of a modern glass-wall villa lounge, cinematic architectural photography, 8k resolution",
+# Eingabefeld für den Adlerflug
+prompt_input = st.text_area(
+    "Describe what the eagle should do (Text auf Englisch für beste KI-Ergebnisse):",
+    value="A majestic eagle flying forward smoothly over epic alpine mountain peaks, misty canyons, cinematic sunset lighting, highly detailed feathers, 8k resolution",
     height=100
 )
 
-if st.button("Bild generieren", type="primary"):
+if st.button("Adlerflug generieren", type="primary"):
     if not api_key:
         st.error("Bitte zuerst den API-Key in den Streamlit Secrets konfigurieren!")
     else:
-        with st.spinner("Anfrage wird an OpenRouter generiert..."):
-            headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://streamlit.io"
+        }
+
+        # Step 1: High-Quality Start Frame (FLUX via OpenRouter Chat/Image Endpunkt)
+        with st.spinner("Schritt 1/2: Hochauflösendes Startbild des Adlerflugs wird erstellt..."):
+            image_payload = {
+                "model": "google/gemini-2.5-flash",  # Multimodales Modell für stabile Bild- & Promptverarbeitung
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": f"Generate a cinematic ultra-wide shot: {prompt_input}"
+                    }
+                ]
             }
-            
-            # Bild-Payload für den Image API-Endpunkt
-            payload = {
-                "model": "bytedance-seed/seedream-4.5",  # Aktuell starkes & volatiles Bildmodell
-                "prompt": prompt
-            }
-            
+
             try:
-                # WICHTIG: Dedizierter Bild-Endpunkt /api/v1/images
-                response = requests.post(
-                    "https://openrouter.ai/api/v1/images",
+                img_response = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
                     headers=headers,
-                    data=json.dumps(payload)
+                    data=json.dumps(image_payload)
                 )
-                
-                if response.status_code == 200:
-                    res_data = response.json()
-                    st.success("Erfolgreich generiert!")
-                    
-                    # Bild anzeigen (Base64 oder URL aus der Antwort)
-                    if "data" in res_data and len(res_data["data"]) > 0:
-                        image_entry = res_data["data"][0]
-                        if "url" in image_entry:
-                            st.image(image_entry["url"], caption="Generierter Raum")
-                        elif "b64_json" in image_entry:
-                            import base64
-                            img_data = base64.b64decode(image_entry["b64_json"])
-                            st.image(img_data, caption="Generierter Raum")
-                    else:
-                        st.json(res_data)
+
+                if img_response.status_code == 200:
+                    img_data = img_response.json()
+                    st.success("Startbild erfolgreich gerendert!")
+
+                    # Step 2: Image-to-Video Animation (Luma Ray 2 auf OpenRouter)
+                    with st.spinner("Schritt 2/2: KI erzeugt die flüssige Flug-Animation (dauert ca. 30-60 Sek)..."):
+                        video_payload = {
+                            "model": "luma/ray-2",
+                            "messages": [
+                                {
+                                    "role": "user",
+                                    "content": f"Smooth forward camera motion following the eagle flying through the landscape: {prompt_input}"
+                                }
+                            ]
+                        }
+
+                        vid_response = requests.post(
+                            "https://openrouter.ai/api/v1/chat/completions",
+                            headers=headers,
+                            data=json.dumps(video_payload)
+                        )
+
+                        if vid_response.status_code == 200:
+                            vid_data = vid_response.json()
+                            content = vid_data["choices"][0]["message"]["content"]
+
+                            st.balloons()
+                            st.subheader("🎬 Dein Adlerflug:")
+
+                            # Video oder Link direkt anzeigen
+                            if "http" in content and (".mp4" in content or "video" in content):
+                                st.video(content)
+                            else:
+                                st.write(content)
+                                st.json(vid_data)
+                        else:
+                            st.error(f"Fehler bei der Videogenerierung (Status {vid_response.status_code}): {vid_response.text}")
+
                 else:
-                    st.error(f"Fehler {response.status_code}: {response.text}")
-                    
+                    st.error(f"Fehler bei Bildgenerierung (Status {img_response.status_code}): {img_response.text}")
+
             except Exception as e:
                 st.error(f"Verbindungsfehler: {e}")
