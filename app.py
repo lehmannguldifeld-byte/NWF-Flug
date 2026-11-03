@@ -20,7 +20,7 @@ scenes = [
         "nr": "1",
         "title": "1. Empfang beim BIT-Schnuppertag",
         "desc": "Ein junger Teenie-Junge und ein Mädchen betreten motiviert das moderne BIT-Gebäude in Zollikofen.",
-        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass Bundesamt für Informatik (BIT) building in Zollikofen, smiling with excitement, warm indoor lighting"
+        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass Bundesamt für Informatik building in Zollikofen, smiling with excitement, warm indoor lighting"
     },
     {
         "nr": "2",
@@ -50,7 +50,7 @@ scenes = [
         "nr": "6",
         "title": "6. Glücklicher Ausstieg aus dem BIT",
         "desc": "Glücklich und erleichtert verlässt die Familie das moderne BIT-Gebäude in Zollikofen.",
-        "prompt": STYLE + "A teenage boy and his parents walking outside a modern glass administrative BIT office building in Zollikofen, smiling and happy under a bright sunny sky"
+        "prompt": STYLE + "A teenage boy and his parents walking outside a modern glass BIT office building in Zollikofen, smiling and happy under a bright sunny sky"
     },
     {
         "nr": "7",
