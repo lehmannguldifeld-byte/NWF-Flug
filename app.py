@@ -43,7 +43,7 @@ scenes = [
     {
         "nr": "5",
         "title": "5. Das Bewerbungsgespräch",
-        "desc": "Exakter Raum im BIT: 3 Interviewer (Lernender 3. LJ, 55-jährige HR-Frau mit roten Haaren, 57-jähriger Martin mit braunen Haaren) gegenüber von Schüler & Eltern. An der Wand hängt eine Tafel mit einem Tetris-Spiel.",
+        "desc": "Bewerbungsgespräch",
         "prompt": STYLE + "Interior shot of a modern office meeting room. On one side of the table sit 3 interviewers: a young male 3rd-year apprentice, a 55-year-old female HR employee with medium-length red hair, and a 57-year-old man named Martin with short brown hair. On the other side of the table sits the 15-year-old student with his mother and father. In the background on the wall, there is a blackboard with a colorful Tetris game drawn on it."
     },
     {
@@ -56,7 +56,7 @@ scenes = [
         "nr": "7",
         "title": "7. Der Boten-Adler auf dem Dach",
         "desc": "Ein majestätischer Adler nimmt den Lehrvertrag auf dem Dach des BIT-Gebäudes entgegen.",
-        "prompt": STYLE + "A majestic golden eagle perched on top of the modern glass roof of the BIT building in Zollikofen, holding a folded paper document in its talons, dramatic sunset light"
+        "prompt": STYLE + "A majestic golden eagle perched on top of the modern glass roof of the BIT building in Zollikofen, holding a folded paper document in its talons, Name of talon: lehrvertrag, dramatic sunset light"
     },
     {
         "nr": "8",
