@@ -2,25 +2,25 @@ import streamlit as st
 import requests
 import json
 
-st.set_page_config(page_title="BIT Lehrlings-Story (Zollikofen)", layout="wide")
+st.set_page_config(page_title="BIT Lehrlings-Story", layout="wide")
 
 st.title("🦅 Die Geschichte vom BIT-Schnuppern bis zum EFZ-Gipfel")
-st.write("Generiere das angepasste 13-Bilder-Storyboard mit Fokus auf Zollikofen und dezentem Stil.")
+st.write("13-Bilder Storyboard mit exakter mobiler Reihenfolge und angepasster Bewerbungs-Szene.")
 
 api_key = st.secrets.get("OPENROUTER_API_KEY", "")
 
 if not api_key:
     st.warning("⚠️ Bitte hinterlege deinen OPENROUTER_API_KEY in den Streamlit Secrets.")
 
-# Neutrale Stil-Vorgabe ohne klischeehafte Schweizer-Elemente
-STYLE = "Photorealistic 8k cinematic film render, golden hour sunlight, warm color palette, highly detailed modern architectural and natural environment, "
+# Neutrale Stil-Vorgabe für durchgehende Optik
+STYLE = "Photorealistic 8k cinematic film render, golden hour sunlight, warm color palette, highly detailed modern environment, "
 
 scenes = [
     {
         "nr": "1",
         "title": "1. Empfang beim BIT-Schnuppertag",
         "desc": "Ein junger Teenie-Junge und ein Mädchen betreten motiviert das moderne BIT-Gebäude in Zollikofen.",
-        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass IT administration building in Zollikofen, smiling with excitement, warm indoor lighting, modern architectural design"
+        "prompt": STYLE + "A 15-year-old teenage boy and a teenage girl entering the bright modern reception hall of a sleek glass IT administration building in Zollikofen, smiling with excitement, warm indoor lighting"
     },
     {
         "nr": "2",
@@ -43,8 +43,8 @@ scenes = [
     {
         "nr": "5",
         "title": "5. Das Bewerbungsgespräch",
-        "desc": "Im Sitzungszimmer des BIT stellt sich der Junge im Gespräch mit den 3 Experten vor.",
-        "prompt": STYLE + "Interior shot of a sleek glass conference room, a teenage boy sitting confidently with his parents, facing 3 friendly IT interviewers across a modern table, professional atmosphere"
+        "desc": "Exakter Raum im BIT: 3 Interviewer (Lernender 3. LJ, 55-jährige HR-Frau mit roten Haaren, 57-jähriger Martin mit braunen Haaren) gegenüber von Schüler & Eltern. An der Wand hängt eine Tafel mit einem Tetris-Spiel.",
+        "prompt": STYLE + "Interior shot of a modern office meeting room. On one side of the table sit 3 interviewers: a young male 3rd-year apprentice, a 55-year-old female HR employee with medium-length red hair, and a 57-year-old man named Martin with short brown hair. On the other side of the table sits the 15-year-old student with his mother and father. In the background on the wall, there is a blackboard with a colorful Tetris game drawn on it."
     },
     {
         "nr": "6",
@@ -55,7 +55,7 @@ scenes = [
     {
         "nr": "7",
         "title": "7. Der Boten-Adler auf dem Dach",
-        "desc": "Ein majestätischer Adler nimmt den Lehrvertrag auf dem Dach des BIT-Gebäudes in Zollikofen entgegen.",
+        "desc": "Ein majestätischer Adler nimmt den Lehrvertrag auf dem Dach des BIT-Gebäudes entgegen.",
         "prompt": STYLE + "A majestic golden eagle perched on top of the modern glass roof of the BIT building in Zollikofen, holding a folded paper document in its talons, dramatic sunset light"
     },
     {
@@ -105,11 +105,13 @@ if st.button("🚀 13-Bilder Storyboard generieren", type="primary"):
             "Content-Type": "application/json"
         }
 
-        col1, col2 = st.columns(2)
-        columns = [col1, col2] * 7
-
-        for idx, scene in enumerate(scenes):
-            with columns[idx]:
+        # Paarweise Erzeugung für perfekte mobile Sortierung (1, 2, 3, 4, 5...)
+        for i in range(0, len(scenes), 2):
+            col1, col2 = st.columns(2)
+            
+            # Linkes Bild im Paar
+            with col1:
+                scene = scenes[i]
                 st.subheader(scene["title"])
                 st.caption(scene["desc"])
 
@@ -128,7 +130,6 @@ if st.button("🚀 13-Bilder Storyboard generieren", type="primary"):
 
                         if res.status_code == 200:
                             res_data = res.json()
-
                             if "data" in res_data and len(res_data["data"]) > 0:
                                 image_entry = res_data["data"][0]
                                 if "url" in image_entry:
@@ -142,6 +143,43 @@ if st.button("🚀 13-Bilder Storyboard generieren", type="primary"):
                                 st.json(res_data)
                         else:
                             st.error(f"Fehler {res.status_code}: {res.text}")
-
                     except Exception as e:
                         st.error(f"Verbindungsfehler: {e}")
+
+            # Rechtes Bild im Paar (falls vorhanden)
+            if i + 1 < len(scenes):
+                with col2:
+                    scene = scenes[i + 1]
+                    st.subheader(scene["title"])
+                    st.caption(scene["desc"])
+
+                    with st.spinner(f"Rendere Bild {scene['nr']}/13..."):
+                        payload = {
+                            "model": "bytedance-seed/seedream-4.5",
+                            "prompt": scene["prompt"]
+                        }
+
+                        try:
+                            res = requests.post(
+                                "https://openrouter.ai/api/v1/images",
+                                headers=headers,
+                                data=json.dumps(payload)
+                            )
+
+                            if res.status_code == 200:
+                                res_data = res.json()
+                                if "data" in res_data and len(res_data["data"]) > 0:
+                                    image_entry = res_data["data"][0]
+                                    if "url" in image_entry:
+                                        st.image(image_entry["url"], width="stretch")
+                                    elif "b64_json" in image_entry:
+                                        import base64
+                                        img_bytes = base64.b64decode(image_entry["b64_json"])
+                                        st.image(img_bytes, width="stretch")
+                                else:
+                                    st.write("Keine Bild-URL empfangen.")
+                                    st.json(res_data)
+                            else:
+                                st.error(f"Fehler {res.status_code}: {res.text}")
+                        except Exception as e:
+                            st.error(f"Verbindungsfehler: {e}")
