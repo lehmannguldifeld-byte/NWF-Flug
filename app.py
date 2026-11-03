@@ -12,7 +12,7 @@ api_key = st.secrets.get("OPENROUTER_API_KEY", "")
 if not api_key:
     st.warning("⚠️ Bitte hinterlege deinen OPENROUTER_API_KEY in den Streamlit Secrets.")
 
-# Stil-Anker für durchgehende visuelle Konsistenz
+# Stil-Anker für durchgehende visuelle Konsistency
 STYLE = "Photorealistic 8k cinematic film render, golden hour sunlight, warm color palette, highly detailed Swiss architecture and nature, "
 
 # Die 13 aufeinander abgestimmten Szenen
@@ -133,11 +133,11 @@ if st.button("🚀 13-Bilder Storyboard generieren", type="primary"):
                             if "data" in res_data and len(res_data["data"]) > 0:
                                 image_entry = res_data["data"][0]
                                 if "url" in image_entry:
-                                    st.image(image_entry["url"], use_container_width=True)
+                                    st.image(image_entry["url"], width="stretch")
                                 elif "b64_json" in image_entry:
                                     import base64
                                     img_bytes = base64.b64decode(image_entry["b64_json"])
-                                    st.image(img_bytes, use_container_width=True)
+                                    st.image(img_bytes, width="stretch")
                             else:
                                 st.write("Keine Bild-URL empfangen.")
                                 st.json(res_data)
