@@ -2,26 +2,29 @@ import streamlit as st
 import requests
 import json
 
-st.set_page_config(page_title="3D Gebäude Flug", layout="centered")
+# Seiten-Konfiguration
+st.set_page_config(page_title="3D Gebäude Visualisierung", layout="centered")
 
-st.title("🏗️ AI Gebäude-Kameraflug")
-st.write("Generiere Kamerafahrten und Architektur-Visualisierungen über OpenRouter.")
+st.title("🏗️ AI Gebäude Visualisierung")
+st.write("Erstelle Architektur-Visualisierungen und Raumkonzepte über OpenRouter.")
 
 # API-Key sicher aus den Streamlit Secrets auslesen
 api_key = st.secrets.get("OPENROUTER_API_KEY", "")
 
 if not api_key:
-    st.warning("⚠️ Keinen API-Key in den Streamlit Secrets gefunden! Bitte trage ihn im Cloud Dashboard ein.")
+    st.warning("⚠️ Kein API-Key in den Streamlit Secrets gefunden! Bitte trage OPENROUTER_API_KEY im Cloud Dashboard ein.")
 
+# Eingabefeld für den Prompt
 prompt = st.text_area(
-    "Beschreibe die Kamerafahrt durch das Gebäude:",
-    value="A smooth FPV drone shot flying through a modern glass villa, cinematic lighting, 4k",
+    "Beschreibe den Raum oder das Gebäude:",
+    value="A wide-angle photorealistic interior shot of a modern glass-wall villa lounge, cinematic architectural photography, 8k resolution",
     height=100
 )
 
-if st.button("Flug generieren", type="primary"):
+# Button zur Generierung
+if st.button("Bild generieren", type="primary"):
     if not api_key:
-        st.error("Bitte erst den API-Key konfigurieren!")
+        st.error("Bitte zuerst den API-Key in den Streamlit Secrets konfigurieren!")
     else:
         with st.spinner("Anfrage wird an OpenRouter gesendet..."):
             headers = {
@@ -30,9 +33,15 @@ if st.button("Flug generieren", type="primary"):
                 "HTTP-Referer": "https://streamlit.io"
             }
             
+            # Payload mit funktionierender FLUX Modell-ID
             payload = {
-                "model": "black-forest-labs/flux-1-dev",  # Hier kannst du auch Videomodelle eintragen
-                "messages": [{"role": "user", "content": prompt}]
+                "model": "black-forest-labs/flux-1-schnell",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
             }
             
             try:
@@ -43,9 +52,22 @@ if st.button("Flug generieren", type="primary"):
                 )
                 
                 if response.status_code == 200:
-                    st.success("Erfolgreich empfangen!")
                     res_data = response.json()
-                    st.json(res_data)
+                    st.success("Erfolgreich generiert!")
+                    
+                    # Versuch, das Bild oder die Rückgabe-URL direkt anzuzeigen
+                    try:
+                        content = res_data["choices"][0]["message"]["content"]
+                        
+                        # Falls die Antwort eine Markdown-Bild-URL enthält
+                        if "![" in content or "http" in content:
+                            st.write(content)
+                        else:
+                            st.write(content)
+                            
+                    except (KeyError, IndexError):
+                        # Falls das Format abweicht, rohes JSON als Fallback anzeigen
+                        st.json(res_data)
                 else:
                     st.error(f"Fehler {response.status_code}: {response.text}")
                     
